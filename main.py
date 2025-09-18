@@ -1,5 +1,6 @@
 from dino import DinoEnv
 import pygame
+
 if __name__ == "__main__":
     env = DinoEnv(render=True)
     s = env.reset()

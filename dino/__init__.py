@@ -18,6 +18,7 @@ GROUND_Y = 400
 DINO_W = 40
 DINO_H = 40
 POS_X = 50
+JUMP_VELOCITY = 0.5
 DUCK_HEIGHT = 20
 STAND_HEIGHT = DINO_H
 
@@ -30,10 +31,11 @@ INITIAL_OBSTACLES = 3
 OBSTACLE_RESPAWN_OFFSET = 50
 OBSTACLE_RESPAWN_MIN = 100
 OBSTACLE_RESPAWN_MAX = 400
-
+FLING_OBSTACLES_OFFSET = 200
 GRAVITY = 0.0015
 GROUND_TOLERANCE = 1
-JUMP_VELOCITY = 0.5
+
+BIRD_HEIGHTS = [GROUND_Y - 80, GROUND_Y - 120, GROUND_Y - 160]
 
 
 
@@ -50,7 +52,16 @@ class DinoEnv:
 
     def reset(self):
         self.dino = Dino()
-        self.obstacles = [Obstacle(FIRST_OBSTACLE_X + i*OBSTACLE_SPACING) for i in range(INITIAL_OBSTACLES)]
+        self.obstacles = []
+        for i in range(INITIAL_OBSTACLES):
+            x = FIRST_OBSTACLE_X + i * OBSTACLE_SPACING
+            if random.random() < 0.5:
+                # obstáculo no chão
+                y = GROUND_Y
+            else:
+                # obstáculo voador
+                y = random.choice(BIRD_HEIGHTS)
+            self.obstacles.append(Obstacle(x, y))
         self.t = 0
         self.done = False
         self.score = 0
@@ -74,8 +85,12 @@ class DinoEnv:
             obs.update(dt)
             # Quanto o obstaculo passou da tela e pode ser
             # Reposicionado
-            if obs.x + obs.width < - OBSTACLE_RESPAWN_OFFSET:
+            if obs.x + obs.width < -OBSTACLE_RESPAWN_OFFSET:
                 obs.x = WINDOW_W + random.randint(OBSTACLE_RESPAWN_MIN, OBSTACLE_RESPAWN_MAX)
+                if random.random() < 0.5:
+                    obs.y = GROUND_Y  # cacto
+                else:
+                    obs.y = random.choice(BIRD_HEIGHTS)  # pássaro
 
         # colisão?
         for obs in self.obstacles:
@@ -109,14 +124,22 @@ class DinoEnv:
     def render_frame(self):
         if not self.render:
             return
+
         self.screen.fill(COLOR_BG)
+
         pygame.draw.line(self.screen, COLOR_GROUND_LINE, (0, GROUND_Y+GROUND_LINE_OFFSET), (WINDOW_W, GROUND_Y+GROUND_LINE_OFFSET))
+
         pygame.draw.rect(self.screen, COLOR_DINO, self.dino.rect())
+
         for obs in self.obstacles:
             pygame.draw.rect(self.screen, COLOR_OBSTACLE, obs.rect())
+
         font = pygame.font.SysFont(None, 24)
         img = font.render(f"Score: {int(self.score)}", True, (0,0,0))
+
         self.screen.blit(img, (10,10))
+
         pygame.display.flip()
+
         self.clock.tick(FPS)
 

@@ -6,8 +6,9 @@ OBSTACLE_SPEED = 0.3
 GROUND_Y = 400
 
 class Obstacle:
-    def __init__(self, x):
+    def __init__(self, x, y):
         self.x = x
+        self.y = y
         self.width = OBSTACLE_X
         self.height = OBSTACLE_Y
         self.speed = OBSTACLE_SPEED
@@ -16,4 +17,4 @@ class Obstacle:
         self.x -= self.speed * dt
 
     def rect(self):
-        return pygame.Rect(int(self.x), GROUND_Y - self.height, self.width, self.height)
+        return pygame.Rect(int(self.x), int(self.y) - self.height, self.width, self.height)
