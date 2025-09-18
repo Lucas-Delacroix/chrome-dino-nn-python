@@ -1,6 +1,8 @@
 import pygame
 import random
-import math
+from dino.dino import Dino
+from dino.obstacle import Obstacle
+
 
 FRAME_DT = 16
 COLOR_BG = (255,255,255)
@@ -33,48 +35,8 @@ GRAVITY = 0.0015
 GROUND_TOLERANCE = 1
 JUMP_VELOCITY = 0.5
 
-class Dino:
-    def __init__(self):
-        self.x = POS_X
-        self.y = GROUND_Y
-        self.vy = 0
-        self.width = DINO_W
-        self.height = DINO_H
-        self.is_ducking = False
 
-    def update(self, dt):
-        self.vy += GRAVITY * dt
-        self.y += self.vy * dt
-        if self.y > GROUND_Y:
-            self.y = GROUND_Y
-            self.vy = 0
 
-    def jump(self):
-        if self.y >= GROUND_Y - GROUND_TOLERANCE:
-            self.vy = -JUMP_VELOCITY
-
-    def duck(self, on=True):
-        self.is_ducking = on
-        if on:
-            self.height = 20
-        else:
-            self.height = 40
-
-    def rect(self):
-        return pygame.Rect(self.x, int(self.y) - self.height, self.width, self.height)
-
-class Obstacle:
-    def __init__(self, x):
-        self.x = x
-        self.width = OBSTACLE_X
-        self.height = OBSTACLE_Y
-        self.speed = OBSTACLE_SPEED
-
-    def update(self, dt):
-        self.x -= self.speed * dt
-
-    def rect(self):
-        return pygame.Rect(int(self.x), GROUND_Y - self.height, self.width, self.height)
 
 class DinoEnv:
     def __init__(self, render=False):
