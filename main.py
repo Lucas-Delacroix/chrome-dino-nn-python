@@ -12,6 +12,8 @@ if __name__ == "__main__":
         action = 0
         if keys[pygame.K_SPACE]:
             action = 1
+        elif keys[pygame.K_UP]:
+            action = 1
         elif keys[pygame.K_DOWN]:
             action = 2
         s, score, done, _ = env.step(action, dt=16)
