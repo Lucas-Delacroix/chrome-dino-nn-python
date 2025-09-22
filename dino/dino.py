@@ -1,12 +1,5 @@
 import pygame
-
-
-
-
-
-
-
-
+from dino.assets import load_image, scale_image
 
 WINDOW_W = 800
 WINDOW_H = 600
